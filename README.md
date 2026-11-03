@@ -55,3 +55,11 @@ By combining gesture-based control with low-cost electronic components, the proj
 The current prototype demonstrates the core concept of gesture-controlled robotic movement and provides a foundation for future development into practical assistive and remote-operation applications.
 # stage of solution
 The project has reached the working prototype stage. The five-finger robotic hand has been mechanically assembled using servo motors, threads and rubber-band return mechanisms. An ESP8266 NodeMCU successfully controls the fingers through wireless Wi-Fi commands. The control interface has also been tested, demonstrating the movement of individual robotic fingers. The project is currently being refined to improve movement accuracy, synchronization and real-time gesture mirroring.
+# benifits and impacts
+The primary beneficiaries are people with limited hand mobility due to disabilities, injuries or other physical conditions. The proposed system could help them perform basic gripping and object-handling activities through gesture-controlled robotic movements, potentially supporting greater independence in everyday tasks.
+
+Rehabilitation centres, assistive technology researchers and engineering students could also benefit by using this project as a foundation for developing affordable robotic assistance systems.
+
+Industries and laboratories could explore adapting the technology for remote handling tasks, particularly where direct human interaction with objects is difficult or unsafe.
+
+The expected impact includes encouraging affordable assistive technology development, supporting research into human-robot interaction and creating opportunities to make basic robotic manipulation systems more accessible to communities with limited resources.
