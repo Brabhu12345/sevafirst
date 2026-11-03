@@ -84,3 +84,19 @@ The system could be further developed into an affordable assistive device for pe
 Production costs could be reduced through locally available materials, simplified designs and affordable electronic components. The design could be shared with schools, engineering institutions, rehabilitation centres and innovation communities to encourage further development and wider adoption.
 
 In the long term, the project could evolve into a modular robotic manipulation platform with applications in assistive technology, education, research and remote operations.
+#proof and details
+Project: Wi-Fi Enabled Five-Finger Gesture-Controlled Robotic Hand
+
+Hardware: 2 ESP8266 NodeMCU boards, 2 Arduino Uno boards, 5 servo motors, 3 phone chargers and 3 USB cables.
+
+Technology: Wi-Fi communication, browser-based control interface and human hand gesture tracking.
+
+Mechanical Design: Homemade lightweight structure using cardboard, threads and rubber bands.
+
+Function: Reproduces human finger movements through wireless servo motor control.
+
+Applications: Assistive technology, remote manipulation, rehabilitation research and human-robot interaction.
+
+Development Stage: Working Prototype.
+
+Estimated Total Budget: ₹3,360 (approximately ₹3,400).
