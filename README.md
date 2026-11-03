@@ -45,7 +45,7 @@ Its distinguishing features include:
 - Expandable design: Provides a foundation for future improvements in assistive robotics and remote manipulation.
 
 Rather than depending on expensive commercial robotic hardware, this project demonstrates a practical, budget-friendly approach using commonly available components and technologies.
-#how solution works
+# how solution works
 The robotic hand is designed to provide an affordable approach to assisting people with limited hand mobility. In practical use, a person could wear a compatible hand-tracking device or use a camera to capture their hand gestures, allowing the robotic hand to reproduce those movements remotely.
 
 This could help users perform basic gripping and object-handling tasks in situations where natural hand movement is difficult or unavailable. It could also be adapted for remote manipulation in workplaces, laboratories and environments where direct human interaction with objects is inconvenient or potentially unsafe.
