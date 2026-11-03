@@ -76,3 +76,11 @@ Cost Breakdown:
 - Wires and Construction Materials: ₹250 (estimated)
 
 Total: ₹3,360
+# expand
+The solution can be expanded by improving its mechanical design, movement accuracy, durability and wireless connectivity. Future versions could use lightweight, stronger materials and more advanced control systems to provide smoother and more precise finger movements.
+
+The system could be further developed into an affordable assistive device for people with limited hand mobility, with personalized controls based on individual needs. It could also be adapted for remote object handling in industries, laboratories and environments where direct human interaction is difficult or unsafe.
+
+Production costs could be reduced through locally available materials, simplified designs and affordable electronic components. The design could be shared with schools, engineering institutions, rehabilitation centres and innovation communities to encourage further development and wider adoption.
+
+In the long term, the project could evolve into a modular robotic manipulation platform with applications in assistive technology, education, research and remote operations.
