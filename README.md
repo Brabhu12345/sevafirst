@@ -9,3 +9,15 @@ Existing advanced robotic and prosthetic hand systems can be expensive and may i
 There is also a need for affordable and intuitive robotic systems that allow humans to control mechanical movements naturally, without relying entirely on buttons, joysticks, or wired controllers.
 
 Our project addresses these challenges by exploring an affordable, gesture-controlled robotic hand that can reproduce human finger movements wirelessly.
+# proposed solution 
+Our proposed solution is a low-cost, five-finger robotic hand that mirrors human hand movements in real time using computer vision and wireless communication.
+
+A camera captures the user's hand movements, and a computer vision-based tracking system detects the positions and movements of individual fingers. The detected movements are converted into control commands and transmitted wirelessly over Wi-Fi to an ESP8266 NodeMCU microcontroller.
+
+The NodeMCU controls five servo motors, with each motor responsible for one robotic finger. These motors reproduce the corresponding finger movements using a mechanical structure made from lightweight and affordable materials. Threads are used to create finger movement, while rubber bands help return the fingers to their original positions.
+
+The prototype is designed to demonstrate real-time gesture mirroring without requiring physical contact with the robotic hand.
+
+Current stage: A working prototype has been developed, with all five servo motors connected and controlled through wireless commands. The robotic hand responds to control inputs, and the gesture-based control system is being integrated and refined.
+
+The project aims to demonstrate how computer vision, microcontrollers, servo motors, and wireless communication can be combined to create an affordable human-robot interaction system.
