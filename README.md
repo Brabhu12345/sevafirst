@@ -21,3 +21,27 @@ The prototype is designed to demonstrate real-time gesture mirroring without req
 Current stage: A working prototype has been developed, with all five servo motors connected and controlled through wireless commands. The robotic hand responds to control inputs, and the gesture-based control system is being integrated and refined.
 
 The project aims to demonstrate how computer vision, microcontrollers, servo motors, and wireless communication can be combined to create an affordable human-robot interaction system.
+# who is affected
+The primary group affected includes people with limited hand mobility due to physical disabilities, injuries, or conditions that restrict their ability to grip and manipulate objects.
+
+The problem is relevant in homes, rehabilitation centres, healthcare environments, and workplaces where hand movements are essential for everyday activities.
+
+The affordability challenge is particularly relevant in communities where access to advanced assistive technologies is limited by financial constraints.
+
+Additionally, industries, laboratories, and research environments can benefit from affordable robotic manipulation systems for remote operations and human-robot interaction.
+
+Our project explores a low-cost approach that could contribute to making basic robotic manipulation technology more accessible.
+# what is innovative 
+The key innovation is the integration of real-time human hand gesture tracking with a five-finger robotic hand through wireless communication.
+
+Unlike conventional robotic hands that rely primarily on manual controls, our system aims to provide a more natural control experience by translating human finger movements directly into robotic movements.
+
+Its distinguishing features include:
+
+- Five-finger independent control: Each finger is operated by an individual servo motor.
+- Real-time gesture mirroring: Human finger movements are translated into corresponding robotic movements.
+- Wireless communication: Uses Wi-Fi and an ESP8266 NodeMCU instead of a direct wired control connection.
+- Low-cost construction: Uses affordable electronic components and a homemade mechanical structure.
+- Expandable design: Provides a foundation for future improvements in assistive robotics and remote manipulation.
+
+Rather than depending on expensive commercial robotic hardware, this project demonstrates a practical, budget-friendly approach using commonly available components and technologies.
