@@ -102,3 +102,5 @@ Development Stage: Working Prototype.
 Estimated Total Budget: ₹3,360 (approximately ₹3,400).
 # who accepts and how localised 
 People with limited hand mobility, rehabilitation centres, hospitals, educational institutions and industries could adopt or further develop this solution. It can be localized by using affordable components available in local markets, collaborating with nearby engineering colleges and healthcare centres, providing instructions in regional languages such as Tamil, and customizing the design to suit local needs and budgets.
+# support 
+To expand this solution globally, we need financial support, technical guidance, access to advanced components, research partnerships with universities and healthcare institutions, and collaboration with assistive technology organizations. Support for product testing, safety improvements, manufacturing and international distribution would help make the solution affordable, reliable and accessible to people with limited hand mobility worldwide.
