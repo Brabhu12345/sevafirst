@@ -1,1 +1,3 @@
 # sevafirst
+# track
+Conventional robotic manipulation systems often require expensive hardware and complicated control mechanisms. There is a need for an affordable, accessible system that can translate natural human hand gestures into corresponding robotic hand movements in real time. This project aims to develop a low-cost, Wi-Fi-enabled five-finger robotic hand that mirrors human hand gestures through real-time gesture tracking and wireless communication.
