@@ -53,3 +53,5 @@ This could help users perform basic gripping and object-handling tasks in situat
 By combining gesture-based control with low-cost electronic components, the project aims to make robotic manipulation technology more accessible, particularly in communities where expensive robotic systems may not be affordable.
 
 The current prototype demonstrates the core concept of gesture-controlled robotic movement and provides a foundation for future development into practical assistive and remote-operation applications.
+# stage of solution
+The project has reached the working prototype stage. The five-finger robotic hand has been mechanically assembled using servo motors, threads and rubber-band return mechanisms. An ESP8266 NodeMCU successfully controls the fingers through wireless Wi-Fi commands. The control interface has also been tested, demonstrating the movement of individual robotic fingers. The project is currently being refined to improve movement accuracy, synchronization and real-time gesture mirroring.
