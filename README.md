@@ -100,3 +100,5 @@ Applications: Assistive technology, remote manipulation, rehabilitation research
 Development Stage: Working Prototype.
 
 Estimated Total Budget: ₹3,360 (approximately ₹3,400).
+# who accepts and how localised 
+People with limited hand mobility, rehabilitation centres, hospitals, educational institutions and industries could adopt or further develop this solution. It can be localized by using affordable components available in local markets, collaborating with nearby engineering colleges and healthcare centres, providing instructions in regional languages such as Tamil, and customizing the design to suit local needs and budgets.
