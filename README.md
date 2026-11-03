@@ -63,3 +63,16 @@ Rehabilitation centres, assistive technology researchers and engineering student
 Industries and laboratories could explore adapting the technology for remote handling tasks, particularly where direct human interaction with objects is difficult or unsafe.
 
 The expected impact includes encouraging affordable assistive technology development, supporting research into human-robot interaction and creating opportunities to make basic robotic manipulation systems more accessible to communities with limited resources.
+# budget
+Total Estimated Project Budget: ₹3,360 (Approximately ₹3,400).
+
+Cost Breakdown:
+
+- 2 ESP8266 NodeMCU: ₹800
+- 2 Arduino Uno: ₹960
+- 5 Servo Motors: ₹900
+- 3 Phone Chargers: ₹300 (estimated)
+- 3 USB Cables: ₹150 (estimated)
+- Wires and Construction Materials: ₹250 (estimated)
+
+Total: ₹3,360
