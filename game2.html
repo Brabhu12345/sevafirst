@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#101827"><title>MINI CITY</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101827;color:#eef7ff;font-family:system-ui,Arial;touch-action:none}
+canvas{display:block;width:100vw;height:100dvh;background:#263d3a}
+#top{position:fixed;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:7px;pointer-events:none}
+.pill{background:#101b2ddd;border:1px solid #a5d7d955;border-radius:11px;padding:7px 10px;box-shadow:0 4px 18px #0005;min-width:70px}
+.pill small{display:block;color:#a7c4c4;font-size:9px;letter-spacing:1.4px}.pill b{font-size:15px}
+#rightTop{display:flex;gap:7px}button{color:#f2ffff;background:#132c39eF;border:1px solid #a4e5dc88;border-radius:12px;padding:10px 13px;font-weight:800;letter-spacing:.5px}
+#map{position:fixed;right:12px;top:78px;width:112px;height:112px;border:1px solid #b7e8dc99;border-radius:12px;background:#101b2ddd}
+#mission{position:fixed;left:10px;top:78px;max-width:calc(100vw - 145px);background:#101b2ddd;border:1px solid #f7d27b77;border-radius:11px;padding:9px 11px;font-size:11px;color:#e9f5e9}
+#mission strong{display:block;color:#ffdc8c;font-size:9px;letter-spacing:1.4px;margin-bottom:3px}
+#controls{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:space-between;padding:0 14px;pointer-events:none}
+.pad{display:grid;grid-template-columns:55px 55px 55px;grid-template-rows:48px 48px;gap:5px;pointer-events:auto}
+.pad button{padding:0;font-size:20px;background:#102631d9;border-radius:13px;touch-action:none}
+#up{grid-column:2;grid-row:1}#left{grid-column:1;grid-row:2}#down{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
+.actions{display:flex;flex-direction:column;gap:9px;justify-content:end;pointer-events:auto}
+.actions button{min-width:86px;min-height:49px;background:#283c35ed;border-color:#ffe19a88;touch-action:none}
+.overlay{position:fixed;inset:0;background:#07111bd9;display:grid;place-items:center;padding:20px}
+.panel{width:min(430px,100%);padding:25px;border:1px solid #8ce0ce77;border-radius:22px;background:linear-gradient(145deg,#1c3540,#101827);text-align:center;box-shadow:0 18px 70px #0009}
+h1{font-size:clamp(38px,10vw,56px);line-height:1;margin:0;color:#a4f3d9;letter-spacing:3px;text-shadow:0 0 24px #54dcb455}
+.sub{font-size:10px;letter-spacing:3px;color:#b3d4d2;margin:9px 0 20px}
+p{color:#d2e1df;font-size:14px;line-height:1.55}
+.primary{width:100%;padding:15px;background:linear-gradient(90deg,#237c71,#426c89);border:0;margin-top:10px}
+.note{font-size:11px;color:#a1b9b8}
+.hidden{display:none!important}
+@media(min-width:750px){#controls{max-width:700px;left:50%;transform:translateX(-50%)}}
+</style></head>
+<body>
+<canvas id="c"></canvas>
+<div id="top">
+ <div class="pill"><small>CASH</small><b id="cash">0</b></div>
+ <div class="pill"><small>MODE</small><b id="mode">ON FOOT</b></div>
+ <div id="rightTop"><div class="pill"><small>SPEED</small><b id="speed">0</b></div><div class="pill"><small>BEST</small><b id="best">0</b></div></div>
+</div>
+<div id="mission"><strong>CITY JOB</strong><span id="task">Find the golden checkpoint</span></div>
+<canvas id="map" width="112" height="112"></canvas>
+<div id="controls" class="hidden">
+ <div class="pad">
+  <button id="up">▲</button><button id="left">◀</button><button id="down">▼</button><button id="right">▶</button>
+ </div>
+ <div class="actions"><button id="interact">ENTER CAR</button><button id="boost">BOOST</button></div>
+</div>
+<div class="overlay" id="menu"><div class="panel">
+ <h1>MINI CITY</h1><div class="sub">A LITTLE CITY. YOUR RULES.</div>
+ <p>Explore the streets, find your car, collect cash and deliver packages to glowing checkpoints.</p>
+ <p>▲ ▼ ◀ ▶ Move or drive<br>ENTER CAR to switch between walking and driving<br>Reach the gold marker to complete a job.</p>
+ <button class="primary" id="play">ENTER THE CITY</button>
+ <p class="note">Single-file offline game · Progress saved on this device</p>
+ </div></div>
+<div class="overlay hidden" id="pause"><div class="panel"><h1>PAUSED</h1><div class="sub">CITY LIFE CAN WAIT</div><button class="primary" id="resume">BACK TO CITY</button></div></div>
+<script>
+(()=>{
+const c=document.getElementById('c'),g=c.getContext('2d'),m=document.getElementById('map'),mg=m.getContext('2d');
+const $=x=>document.getElementById(x);
+let W,H,dpr,cam={x:0,y:0},running=false,paused=false,keys={},cash=+(localStorage.mcCash||0),best=+(localStorage.mcBest||0),jobs=+(localStorage.mcJobs||0);
+const world={w:2400,h:1800,road:150,block:300};
+let player={x:1200,y:900,a:0},car={x:1200,y:1000,a:-Math.PI/2,v:0},inCar=false,checkpoint={x:1570,y:900},trees=[],buildings=[],coins=[],traffic=[],particles=[],time=0;
+$('cash').textContent=cash;$('best').textContent=best;
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';g.setTransform(dpr,0,0,dpr,0,0);makeMap()}
+function makeMap(){
+ buildings=[];trees=[];coins=[];traffic=[];
+ // Grid of streets and city blocks
+ for(let x=90;x<world.w-90;x+=world.block){for(let y=90;y<world.h-90;y+=world.block){
+  let bw=180+Math.random()*45,bh=175+Math.random()*55;
+  buildings.push({x:x+35,y:y+35,w:bw,h:bh,hue:Math.floor(Math.random()*4)});
+  for(let i=0;i<5;i++)trees.push({x:x+Math.random()*270,y:y+Math.random()*270,r:8+Math.random()*5});
+ }}
+ for(let i=0;i<32;i++)coins.push({x:100+Math.random()*(world.w-200),y:100+Math.random()*(world.h-200),got:false});
+ for(let i=0;i<8;i++)traffic.push({x:200+Math.random()*(world.w-400),y:200+Math.random()*(world.h-400),a:Math.random()*6.28,v:35+Math.random()*35});
+}
+addEventListener('resize',resize);resize();
+const down={up:false,down:false,left:false,right:false,boost:false};
+function bind(id,k){let b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();down[k]=true;b.setPointerCapture(e.pointerId)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>down[k]=false))}
+['up','down','left','right','boost'].forEach(k=>bind(k,k));
+addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['arrowup','w'].includes(k))down.up=true;if(['arrowdown','s'].includes(k))down.down=true;if(['arrowleft','a'].includes(k))down.left=true;if(['arrowright','d'].includes(k))down.right=true;if(k===' '){e.preventDefault();toggleCar()}if(k==='escape')pause()});
+addEventListener('keyup',e=>{let k=e.key.toLowerCase();if(['arrowup','w'].includes(k))down.up=false;if(['arrowdown','s'].includes(k))down.down=false;if(['arrowleft','a'].includes(k))down.left=false;if(['arrowright','d'].includes(k))down.right=false});
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function toggleCar(){if(!running||paused)return;if(!inCar&&dist(player,car)<75){inCar=true;player.x=car.x;player.y=car.y}else if(inCar){inCar=false;player.x=car.x+Math.cos(car.a+1.5)*35;player.y=car.y+Math.sin(car.a+1.5)*35}}
+$('interact').onclick=toggleCar;
+function nextJob(){checkpoint={x:170+Math.random()*(world.w-340),y:170+Math.random()*(world.h-340)};$('task').textContent='Deliver to the golden marker · Job '+(jobs+1)}
+function start(){running=true;paused=false;$('menu').classList.add('hidden');$('pause').classList.add('hidden');$('controls').classList.remove('hidden');player={x:1200,y:900,a:0};car={x:1240,y:1000,a:-Math.PI/2,v:0};inCar=false;nextJob();last=performance.now();requestAnimationFrame(loop)}
+function pause(){if(!running)return;paused=!paused;$('pause').classList.toggle('hidden',!paused);if(!paused){last=performance.now();requestAnimationFrame(loop)}}
+$('play').onclick=start;$('resume').onclick=pause;
+function blocked(x,y,r){return buildings.some(b=>x+r>b.x&&x-r<b.x+b.w&&y+r>b.y&&y-r<b.y+b.h)}
+function update(dt){
+ time+=dt;
+ if(inCar){
+  let accel=down.boost?420:260;
+  if(down.up)car.v+=accel*dt;if(down.down)car.v-=accel*.8*dt;
+  car.v*=Math.pow(.985,dt*60);car.v=Math.max(-120,Math.min(down.boost?390:260,car.v));
+  let turn=(down.left?-1:0)+(down.right?1:0);
+  car.a+=turn*dt*(1.8+Math.abs(car.v)/125)*Math.sign(car.v||1);
+  let nx=car.x+Math.cos(car.a)*car.v*dt,ny=car.y+Math.sin(car.a)*car.v*dt;
+  if(!blocked(nx,ny,17)){car.x=nx;car.y=ny}else{car.v*=-.28}
+  car.x=Math.max(25,Math.min(world.w-25,car.x));car.y=Math.max(25,Math.min(world.h-25,car.y));
+  player.x=car.x;player.y=car.y;player.a=car.a;
+ }else{
+  let dx=(down.right?1:0)-(down.left?1:0),dy=(down.down?1:0)-(down.up?1:0),len=Math.hypot(dx,dy)||1;
+  let nx=player.x+dx/len*175*dt,ny=player.y+dy/len*175*dt;
+  if(!blocked(nx,player.y,9))player.x=nx;if(!blocked(player.x,ny,9))player.y=ny;
+  if(dx||dy)player.a=Math.atan2(dy,dx);
+ }
+ coins.forEach(o=>{if(!o.got&&dist(player,o)<24){o.got=true;cash+=10;$('cash').textContent=cash;localStorage.mcCash=cash}});
+ if(dist(player,checkpoint)<43){cash+=100;jobs++;$('cash').textContent=cash;localStorage.mcCash=cash;localStorage.mcJobs=jobs;best=Math.max(best,jobs);localStorage.mcBest=best;$('best').textContent=best;nextJob()}
+ traffic.forEach(t=>{t.x+=Math.cos(t.a)*t.v*dt;t.y+=Math.sin(t.a)*t.v*dt;if(t.x<50||t.x>world.w-50||t.y<50||t.y>world.h-50)t.a+=Math.PI*.7});
+ cam.x=Math.max(0,Math.min(world.w-W,player.x-W/2));cam.y=Math.max(0,Math.min(world.h-H,player.y-H/2));
+ $('mode').textContent=inCar?'DRIVING':'ON FOOT';$('speed').textContent=inCar?Math.round(Math.abs(car.v)*.45)+' km/h':'—';
+ $('interact').textContent=inCar?'EXIT CAR':dist(player,car)<75?'ENTER CAR':'FIND CAR';
+}
+function roundRect(x,y,w,h,r,fill,stroke){g.beginPath();g.roundRect(x,y,w,h,r);if(fill){g.fillStyle=fill;g.fill()}if(stroke){g.strokeStyle=stroke;g.stroke()}}
+function drawCar(x,y,a,color,scale=1){g.save();g.translate(x,y);g.rotate(a);g.scale(scale,scale);roundRect(-22,-12,44,24,6,color,'#d9f8eb');roundRect(-10,-9,18,18,4,'#9dc9c4');g.fillStyle='#18252d';g.fillRect(-15,-14,9,4);g.fillRect(8,-14,9,4);g.fillRect(-15,10,9,4);g.fillRect(8,10,9,4);g.fillStyle='#ffe6a0';g.fillRect(17,-8,4,5);g.fillRect(17,3,4,5);g.restore()}
+function draw(){
+ g.clearRect(0,0,W,H);g.save();g.translate(-cam.x,-cam.y);
+ g.fillStyle='#315348';g.fillRect(0,0,world.w,world.h);
+ // roads in grid
+ g.fillStyle='#39444a';for(let x=0;x<world.w;x+=world.block){g.fillRect(x,0,world.road,world.h);g.fillRect(0,x,world.w,world.road)}
+ g.strokeStyle='#b8b78b66';g.lineWidth=2;g.setLineDash([18,18]);for(let x=world.road/2;x<world.w;x+=world.block){g.beginPath();g.moveTo(x,0);g.lineTo(x,world.h);g.stroke();g.beginPath();g.moveTo(0,x);g.lineTo(world.w,x);g.stroke()}g.setLineDash([]);
+ // parks/trees
+ trees.forEach(t=>{g.fillStyle='#24453b';g.beginPath();g.arc(t.x,t.y,t.r+4,0,7);g.fill();g.fillStyle='#4e8762';g.beginPath();g.arc(t.x-2,t.y-3,t.r,0,7);g.fill()});
+ buildings.forEach((b,i)=>{let colors=['#586b75','#6b6260','#596c63','#66617b'];roundRect(b.x+5,b.y+8,b.w,b.h,8,'#172b2a');roundRect(b.x,b.y,b.w,b.h,8,colors[b.hue],'#a6c1ad66');g.fillStyle='#d2c99b';for(let x=b.x+17;x<b.x+b.w-10;x+=32)for(let y=b.y+18;y<b.y+b.h-10;y+=30)g.fillRect(x,y,11,8);g.fillStyle='#263c40';g.fillRect(b.x+b.w/2-15,b.y+b.h-25,30,25)});
+ coins.forEach(o=>{if(o.got)return;g.fillStyle='#ffd36d';g.beginPath();g.arc(o.x,o.y,7,0,7);g.fill();g.strokeStyle='#fff0ae';g.stroke()});
+ // checkpoint
+ g.strokeStyle='#ffd36d';g.lineWidth=3;g.beginPath();g.arc(checkpoint.x,checkpoint.y,22+Math.sin(time*4)*5,0,7);g.stroke();g.fillStyle='#ffd36d';g.beginPath();g.arc(checkpoint.x,checkpoint.y,6,0,7);g.fill();g.fillStyle='#fff0bd';g.font='bold 11px system-ui';g.fillText('JOB',checkpoint.x-11,checkpoint.y-30);
+ traffic.forEach(t=>drawCar(t.x,t.y,t.a,'#bd7775',.75));
+ drawCar(car.x,car.y,car.a,'#4bc5ba',1);
+ if(!inCar){g.save();g.translate(player.x,player.y);g.rotate(player.a);g.fillStyle='#f5d49b';g.beginPath();g.arc(0,-7,6,0,7);g.fill();roundRect(-6,-2,12,15,4,'#f1f4ec');g.restore()}
+ g.restore();drawMap();
+}
+function drawMap(){mg.clearRect(0,0,112,112);mg.fillStyle='#243c37';mg.fillRect(0,0,112,112);mg.fillStyle='#68747a';for(let x=0;x<112;x+=14){mg.fillRect(x,0,5,112);mg.fillRect(0,x,112,5)}mg.fillStyle='#a6b2a1';buildings.forEach(b=>mg.fillRect(b.x/world.w*112,b.y/world.h*112,b.w/world.w*112,b.h/world.h*112));mg.fillStyle='#ffd36d';mg.beginPath();mg.arc(checkpoint.x/world.w*112,checkpoint.y/world.h*112,3,0,7);mg.fill();mg.fillStyle='#65f4dc';mg.beginPath();mg.arc(player.x/world.w*112,player.y/world.h*112,3,0,7);mg.fill()}
+let last=0;function loop(now){if(!running||paused)return;let dt=Math.min((now-last)/1000,.04);last=now;update(dt);draw();requestAnimationFrame(loop)}
+// prevent browser gestures and accidental page scrolling
+document.addEventListener('contextmenu',e=>e.preventDefault());
+})();
+</script></body></html>
