@@ -1,0 +1,1064 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class XII | Mark Report</title>
+
+<style>
+:root {
+    --bg:#f5f6fa;
+    --card:#fff;
+    --text:#20283a;
+    --muted:#8992a5;
+    --primary:#5146e5;
+    --border:#e9ebf1;
+    --green:#0b9b70;
+    --red:#e05260;
+}
+
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body {
+    font-family:Inter,"Segoe UI",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:30px 18px;
+}
+
+.app {
+    max-width:1150px;
+    margin:auto;
+}
+
+.topbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.eyebrow {
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:2px;
+    color:var(--primary);
+}
+
+.topbar h1 {
+    font-size:34px;
+    letter-spacing:-1.5px;
+    margin:5px 0;
+}
+
+.topbar p {
+    color:var(--muted);
+    font-size:14px;
+}
+
+button {
+    border:0;
+    cursor:pointer;
+    font-weight:700;
+    font-size:13px;
+    border-radius:10px;
+    transition:.2s;
+}
+
+button:hover {
+    transform:translateY(-2px);
+}
+
+.actions {
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.print-btn {
+    background:var(--primary);
+    color:white;
+    padding:13px 18px;
+}
+
+.reset-btn {
+    background:#fff0f1;
+    color:var(--red);
+    padding:13px 18px;
+}
+
+.card {
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:17px;
+    padding:23px;
+    margin-bottom:17px;
+    box-shadow:0 5px 25px rgba(30,40,70,.035);
+}
+
+.card h2 {
+    font-size:17px;
+    margin-bottom:17px;
+}
+
+.form-grid {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:17px;
+}
+
+.form-grid label {
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    color:var(--muted);
+    margin-bottom:7px;
+}
+
+.form-grid input {
+    width:100%;
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius:9px;
+    font-size:14px;
+    outline:none;
+}
+
+input:focus {
+    border-color:var(--primary)!important;
+    box-shadow:0 0 0 3px #5146e51a;
+}
+
+.stats {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:13px;
+    margin-bottom:17px;
+}
+
+.stat-card {
+    background:white;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:19px;
+}
+
+.stat-card span {
+    color:var(--muted);
+    font-size:12px;
+    font-weight:700;
+}
+
+.stat-card h2 {
+    font-size:27px;
+    margin:9px 0 4px;
+}
+
+.stat-card small {
+    color:var(--muted);
+    font-size:11px;
+}
+
+.section-heading {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.section-heading h2 {
+    margin-bottom:5px;
+}
+
+.section-heading p {
+    color:var(--muted);
+    font-size:12px;
+}
+
+.add-btn {
+    background:#eeedff;
+    color:var(--primary);
+    padding:12px 16px;
+}
+
+.table-container {
+    width:100%;
+    overflow-x:auto;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    min-width:680px;
+}
+
+th {
+    color:var(--muted);
+    font-size:11px;
+    text-align:left;
+    padding:13px 9px;
+    border-bottom:1px solid var(--border);
+}
+
+td {
+    padding:12px 9px;
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+}
+
+td input {
+    width:78px;
+    padding:9px;
+    border:1px solid var(--border);
+    border-radius:7px;
+    outline:none;
+    font-size:13px;
+}
+
+td input.subject-name {
+    width:140px;
+}
+
+.status-pass {
+    color:var(--green);
+    font-weight:800;
+}
+
+.status-fail {
+    color:var(--red);
+    font-weight:800;
+}
+
+.grade {
+    font-weight:800;
+}
+
+.delete-btn {
+    background:#fff0f1;
+    color:var(--red);
+    padding:8px 10px;
+}
+
+/* CHART */
+
+.chart-layout {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center;
+    gap:25px;
+}
+
+.chart-area {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:260px;
+}
+
+.pie-chart {
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:#eceef5;
+    position:relative;
+    flex-shrink:0;
+}
+
+.pie-chart::after {
+    content:"";
+    position:absolute;
+    inset:55px;
+    background:white;
+    border-radius:50%;
+}
+
+.chart-center {
+    position:absolute;
+    inset:0;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    pointer-events:none;
+}
+
+.chart-center strong {
+    font-size:24px;
+}
+
+.chart-center span {
+    font-size:11px;
+    color:var(--muted);
+}
+
+.legend {
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.legend-item {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-size:13px;
+}
+
+.legend-name {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:0;
+}
+
+.legend-name span:last-child {
+    overflow-wrap:anywhere;
+}
+
+.legend-color {
+    width:11px;
+    height:11px;
+    border-radius:3px;
+    flex-shrink:0;
+}
+
+.legend-value {
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.no-chart {
+    color:var(--muted);
+    font-size:13px;
+    text-align:center;
+}
+
+.progress-container {
+    height:10px;
+    width:100%;
+    background:#eceef5;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+
+#progressBar {
+    height:100%;
+    width:0%;
+    background:var(--primary);
+    transition:width .3s;
+}
+
+#performanceText {
+    font-size:13px;
+    color:var(--muted);
+}
+
+.footer {
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    margin:25px 0;
+}
+
+@media(max-width:750px) {
+    body {
+        padding:18px 11px;
+    }
+
+    .topbar h1 {
+        font-size:28px;
+    }
+
+    .stats {
+        grid-template-columns:repeat(2,1fr);
+        gap:9px;
+    }
+
+    .stat-card {
+        padding:14px;
+    }
+
+    .stat-card h2 {
+        font-size:23px;
+    }
+
+    .card {
+        padding:16px;
+    }
+
+    .section-heading {
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .chart-layout {
+        grid-template-columns:1fr;
+    }
+
+    .legend {
+        width:100%;
+    }
+}
+
+@media(max-width:420px) {
+    .form-grid {
+        grid-template-columns:1fr;
+    }
+}
+
+/* PRINT */
+
+@media print {
+    body {
+        background:white;
+        padding:0;
+    }
+
+    .app {
+        max-width:100%;
+    }
+
+    .card,.stat-card {
+        box-shadow:none;
+        break-inside:avoid;
+    }
+
+    .actions,.add-btn,.delete-btn {
+        display:none!important;
+    }
+
+    input {
+        border:none!important;
+        box-shadow:none!important;
+        padding-left:0!important;
+        color:black;
+    }
+
+    .table-container {
+        overflow:visible;
+    }
+
+    table {
+        min-width:0;
+    }
+
+    .chart-layout {
+        grid-template-columns:1fr 1fr;
+    }
+
+    .footer {
+        margin-top:20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="topbar">
+    <div>
+        <span class="eyebrow">ACADEMIC MANAGEMENT</span>
+        <h1>Mark Report</h1>
+        <p>Class XII · Continuous Assessment</p>
+    </div>
+
+    <div class="actions">
+        <button class="reset-btn" onclick="resetAll()">
+            ↻ Reset All
+        </button>
+
+        <button class="print-btn" onclick="window.print()">
+            Print Report ↗
+        </button>
+    </div>
+</header>
+
+<!-- STUDENT INFORMATION -->
+
+<section class="card">
+    <h2>Student Information</h2>
+
+    <div class="form-grid">
+
+        <div>
+            <label>Student Name</label>
+            <input id="studentName" placeholder="Enter name">
+        </div>
+
+        <div>
+            <label>Roll Number</label>
+            <input id="rollNumber" placeholder="Enter roll number">
+        </div>
+
+        <div>
+            <label>School Name</label>
+            <input id="schoolName" placeholder="Enter school">
+        </div>
+
+        <div>
+            <label>Assessment</label>
+            <input id="examName" value="Continuous Assessment">
+        </div>
+
+    </div>
+</section>
+
+<!-- STATISTICS -->
+
+<section class="stats">
+
+    <div class="stat-card">
+        <span>Total Marks</span>
+        <h2 id="totalMarks">0</h2>
+        <small id="maximumMarks">Out of 0</small>
+    </div>
+
+    <div class="stat-card">
+        <span>Percentage</span>
+        <h2 id="percentage">0%</h2>
+        <small>Overall performance</small>
+    </div>
+
+    <div class="stat-card">
+        <span>Subjects</span>
+        <h2 id="subjectCount">0</h2>
+        <small>Added subjects</small>
+    </div>
+
+    <div class="stat-card">
+        <span>Overall Grade</span>
+        <h2 id="overallGrade">-</h2>
+        <small id="overallStatus">Awaiting marks</small>
+    </div>
+
+</section>
+
+<!-- SUBJECT ASSESSMENT -->
+
+<section class="card">
+
+    <div class="section-heading">
+        <div>
+            <h2>Subject Assessment</h2>
+            <p>Maximum marks are limited to 100 per subject.</p>
+        </div>
+
+        <button class="add-btn" onclick="addSubject()">
+            + Add Subject
+        </button>
+    </div>
+
+    <div class="table-container">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Maximum</th>
+                    <th>Pass Mark</th>
+                    <th>Obtained</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody id="subjectTable"></tbody>
+
+        </table>
+    </div>
+
+</section>
+
+<!-- PIE CHART -->
+
+<section class="card">
+
+    <h2>Subject Marks Distribution</h2>
+
+    <div class="chart-layout">
+
+        <div class="chart-area">
+            <div class="pie-chart" id="pieChart">
+
+                <div class="chart-center">
+                    <strong id="chartTotal">0</strong>
+                    <span>Marks obtained</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="legend" id="chartLegend">
+            <p class="no-chart">Enter marks to view the chart.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- PERFORMANCE -->
+
+<section class="card">
+
+    <h2>Performance Overview</h2>
+
+    <div class="progress-container">
+        <div id="progressBar"></div>
+    </div>
+
+    <p id="performanceText">
+        Enter marks to calculate performance.
+    </p>
+
+</section>
+
+<p class="footer">
+    Class XII Academic Report · Offline Edition
+</p>
+
+</div>
+
+<script>
+
+// =====================================
+// SUBJECT DATABASE
+// =====================================
+
+let subjects = [
+    {name:"Tamil",max:100,pass:35,mark:0},
+    {name:"English",max:100,pass:35,mark:0},
+    {name:"Mathematics",max:100,pass:35,mark:0},
+    {name:"Physics",max:100,pass:35,mark:0},
+    {name:"Chemistry",max:100,pass:35,mark:0},
+    {name:"Computer Science",max:100,pass:35,mark:0}
+];
+
+const chartColors = [
+    "#5146e5",
+    "#0b9b70",
+    "#e69a36",
+    "#e05260",
+    "#2999c9",
+    "#9b59b6",
+    "#d16d9a",
+    "#68758a",
+    "#a3a53a",
+    "#168b85"
+];
+
+// =====================================
+// GRADE SYSTEM
+// =====================================
+
+function getGrade(p) {
+
+    if(p>=90) return "A1";
+    if(p>=80) return "A2";
+    if(p>=70) return "B1";
+    if(p>=60) return "B2";
+    if(p>=50) return "C1";
+    if(p>=40) return "C2";
+    if(p>=35) return "D";
+
+    return "E";
+}
+
+// =====================================
+// SAFE HTML
+// =====================================
+
+function escapeHTML(value) {
+
+    return String(value).replace(/[&<>"']/g, c => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+    })[c]);
+
+}
+
+// =====================================
+// RENDER SUBJECTS
+// =====================================
+
+function renderSubjects() {
+
+    const table = document.getElementById("subjectTable");
+
+    table.innerHTML = "";
+
+    subjects.forEach((s,i) => {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>
+                <input class="subject-name"
+                    value="${escapeHTML(s.name)}"
+                    onchange="updateSubject(${i},'name',this.value)">
+            </td>
+
+            <td>
+                <input type="number"
+                    min="1" max="100"
+                    value="${s.max}"
+                    onchange="updateSubject(${i},'max',this.value)">
+            </td>
+
+            <td>
+                <input type="number"
+                    min="0" max="${s.max}"
+                    value="${s.pass}"
+                    onchange="updateSubject(${i},'pass',this.value)">
+            </td>
+
+            <td>
+                <input type="number"
+                    min="0" max="${s.max}"
+                    value="${s.mark}"
+                    onchange="updateSubject(${i},'mark',this.value)">
+            </td>
+
+            <td class="grade" id="grade-${i}">-</td>
+
+            <td id="status-${i}">-</td>
+
+            <td>
+                <button class="delete-btn"
+                    onclick="deleteSubject(${i})">✕</button>
+            </td>
+        `;
+
+        table.appendChild(row);
+
+    });
+
+    calculateResults();
+
+}
+
+// =====================================
+// UPDATE SUBJECT
+// =====================================
+
+function updateSubject(index,field,value) {
+
+    if(!subjects[index]) return;
+
+    let s = subjects[index];
+
+    if(field === "name") {
+
+        s.name = value;
+
+    } else {
+
+        let number = Number(value);
+
+        if(!Number.isFinite(number)) number = 0;
+
+        if(field === "max") {
+
+            s.max = Math.min(100,Math.max(1,number));
+
+            s.pass = Math.min(s.pass,s.max);
+            s.mark = Math.min(s.mark,s.max);
+
+        }
+
+        if(field === "pass") {
+
+            s.pass = Math.min(
+                s.max,
+                Math.max(0,number)
+            );
+
+        }
+
+        if(field === "mark") {
+
+            s.mark = Math.min(
+                s.max,
+                Math.max(0,number)
+            );
+
+        }
+
+    }
+
+    renderSubjects();
+
+}
+
+// =====================================
+// ADD SUBJECT
+// =====================================
+
+function addSubject() {
+
+    subjects.push({
+        name:"New Subject",
+        max:100,
+        pass:35,
+        mark:0
+    });
+
+    renderSubjects();
+
+}
+
+// =====================================
+// DELETE SUBJECT
+// =====================================
+
+function deleteSubject(index) {
+
+    subjects.splice(index,1);
+
+    renderSubjects();
+
+}
+
+// =====================================
+// PIE CHART
+// =====================================
+
+function updatePieChart(total) {
+
+    const chart = document.getElementById("pieChart");
+    const legend = document.getElementById("chartLegend");
+
+    document.getElementById("chartTotal").textContent = total;
+
+    const entries = subjects
+        .map((s,i) => ({
+            name:s.name || "Unnamed",
+            mark:s.mark,
+            color:chartColors[i % chartColors.length]
+        }))
+        .filter(s => s.mark > 0);
+
+    if(!entries.length || total === 0) {
+
+        chart.style.background = "#eceef5";
+
+        legend.innerHTML =
+            '<p class="no-chart">Enter marks to view the chart.</p>';
+
+        return;
+    }
+
+    let current = 0;
+    const segments = [];
+
+    entries.forEach(s => {
+
+        const start = current;
+        current += (s.mark / total) * 360;
+
+        segments.push(
+            `${s.color} ${start}deg ${current}deg`
+        );
+
+    });
+
+    chart.style.background =
+        `conic-gradient(${segments.join(",")})`;
+
+    legend.innerHTML = "";
+
+    entries.forEach(s => {
+
+        const percentage = (s.mark/total)*100;
+
+        const item = document.createElement("div");
+
+        item.className = "legend-item";
+
+        item.innerHTML = `
+            <div class="legend-name">
+                <span class="legend-color"
+                    style="background:${s.color}"></span>
+                <span>${escapeHTML(s.name)}</span>
+            </div>
+
+            <span class="legend-value">
+                ${s.mark} (${percentage.toFixed(1)}%)
+            </span>
+        `;
+
+        legend.appendChild(item);
+
+    });
+
+}
+
+// =====================================
+// CALCULATION ENGINE
+// =====================================
+
+function calculateResults() {
+
+    let total = 0;
+    let maximum = 0;
+    let passed = 0;
+
+    subjects.forEach((s,i) => {
+
+        s.max = Math.min(100,Math.max(1,Number(s.max)||1));
+
+        s.pass = Math.min(
+            s.max,
+            Math.max(0,Number(s.pass)||0)
+        );
+
+        s.mark = Math.min(
+            s.max,
+            Math.max(0,Number(s.mark)||0)
+        );
+
+        total += s.mark;
+        maximum += s.max;
+
+        const percentage = s.mark/s.max*100;
+
+        const grade = getGrade(percentage);
+
+        const isPassed = s.mark >= s.pass;
+
+        if(isPassed) passed++;
+
+        const gradeElement =
+            document.getElementById("grade-"+i);
+
+        const statusElement =
+            document.getElementById("status-"+i);
+
+        if(gradeElement) {
+            gradeElement.textContent = grade;
+        }
+
+        if(statusElement) {
+
+            statusElement.textContent =
+                isPassed ? "PASS" : "FAIL";
+
+            statusElement.className =
+                isPassed ? "status-pass" : "status-fail";
+
+        }
+
+    });
+
+    const percentage = maximum
+        ? total/maximum*100
+        : 0;
+
+    const overallGrade = subjects.length
+        ? getGrade(percentage)
+        : "-";
+
+    const allPassed =
+        subjects.length > 0 &&
+        passed === subjects.length;
+
+    // DASHBOARD
+
+    document.getElementById("totalMarks")
+        .textContent = total;
+
+    document.getElementById("maximumMarks")
+        .textContent = "Out of "+maximum;
+
+    document.getElementById("percentage")
+        .textContent = percentage.toFixed(2)+"%";
+
+    document.getElementById("subjectCount")
+        .textContent = subjects.length;
+
+    document.getElementById("overallGrade")
+        .textContent = overallGrade;
+
+    document.getElementById("overallStatus")
+        .textContent = !subjects.length
+            ? "Awaiting marks"
+            : allPassed
+                ? "All subjects passed"
+                : "Some subjects failed";
+
+    // PROGRESS BAR
+
+    document.getElementById("progressBar")
+        .style.width = Math.min(100,percentage)+"%";
+
+    // PERFORMANCE
+
+    document.getElementById("performanceText")
+        .textContent = !subjects.length
+            ? "Add subjects to calculate performance."
+            : `${total} out of ${maximum} marks obtained.
+               ${passed} of ${subjects.length} subjects passed.`;
+
+    // PIE CHART
+
+    updatePieChart(total);
+
+}
+
+// =====================================
+// RESET ALL
+// =====================================
+
+function resetAll() {
+
+    const confirmation = confirm(
+        "WARNING!\n\n" +
+        "Are you sure you want to reset everything?\n\n" +
+        "This will clear:\n" +
+        "• Student information\n" +
+        "• All subjects\n" +
+        "• All marks\n" +
+        "• Pie chart data\n\n" +
+        "This action cannot be undone."
+    );
+
+    if(!confirmation) return;
+
+    document.getElementById("studentName").value = "";
+    document.getElementById("rollNumber").value = "";
+    document.getElementById("schoolName").value = "";
+    document.getElementById("examName").value = "";
+
+    subjects = [];
+
+    renderSubjects();
+
+}
+
+// =====================================
+// INITIALIZE
+// =====================================
+
+renderSubjects();
+
+</script>
+
+</body>
+</html>
