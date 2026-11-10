@@ -1,0 +1,459 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GameZone | Online Games</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #101124;
+    color: white;
+}
+
+header {
+    background: #191a35;
+    padding: 20px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.logo {
+    color: #00f5d4;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+nav a:hover {
+    color: #00f5d4;
+}
+
+.hero {
+    text-align: center;
+    padding: 70px 20px;
+    background: linear-gradient(135deg, #222451, #4a2479);
+}
+
+.hero h1 {
+    font-size: 44px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    color: #ddd;
+    font-size: 18px;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 13px 25px;
+    border-radius: 8px;
+    background: #00f5d4;
+    color: #101124;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.games {
+    padding: 45px 8%;
+    text-align: center;
+}
+
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.card {
+    background: #1c1d39;
+    padding: 30px 20px;
+    border-radius: 15px;
+    border: 1px solid #36375a;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-7px);
+    border-color: #00f5d4;
+}
+
+.icon {
+    font-size: 55px;
+}
+
+.card h3 {
+    color: #00f5d4;
+}
+
+.card p {
+    color: #ccc;
+    line-height: 1.5;
+}
+
+.play-button {
+    background: #7138e8;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.play-button:hover {
+    background: #895af0;
+}
+
+#game-area {
+    padding: 30px 20px;
+    text-align: center;
+    background: #191a35;
+    margin: 20px auto;
+    max-width: 650px;
+    border-radius: 15px;
+}
+
+#game-area button {
+    margin: 5px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    width: 120px;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #00f5d4;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #aaa;
+    background: #191a35;
+    margin-top: 40px;
+}
+
+@media (max-width: 600px) {
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    nav {
+        margin-top: 15px;
+    }
+
+    nav a {
+        margin-left: 0;
+        margin-right: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🎮 GameZone</div>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#games">Games</a>
+        <a href="#about">About</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Welcome to GameZone!</h1>
+    <p>Your next adventure starts here.</p>
+    <a href="#games" class="button">Explore Games</a>
+</section>
+
+<section class="games" id="games">
+    <h2>🎯 Choose Your Game</h2>
+
+    <div class="game-container" id="game-container">
+    </div>
+</section>
+
+<section id="game-area">
+    <h2 id="game-title">🎮 Game Area</h2>
+    <p id="game-instructions">
+        Choose a game above to start playing!
+    </p>
+    <div id="game-controls"></div>
+    <div id="result"></div>
+</section>
+
+<section class="games" id="about">
+    <h2>About GameZone</h2>
+    <p>Welcome to GameZone, your home for fun and simple online games!</p>
+</section>
+
+<footer>
+    <p>© 2026 GameZone | Play, Enjoy, Repeat!</p>
+</footer>
+
+<script>
+const games = [
+    {
+        name: "Tic-Tac-Toe",
+        description: "Challenge yourself in this classic game!",
+        icon: "⭕",
+        link: "#tictactoe"
+    },
+    {
+        name: "Guess the Number",
+        description: "Can you guess the secret number?",
+        icon: "🎯",
+        link: "#guess"
+    },
+    {
+        name: "Rock Paper Scissors",
+        description: "Play against the computer!",
+        icon: "✊",
+        link: "#rps"
+    }
+];
+
+const gameContainer = document.getElementById("game-container");
+
+games.forEach(game => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const icon = document.createElement("div");
+    icon.className = "icon";
+    icon.textContent = game.icon;
+
+    const heading = document.createElement("h3");
+    heading.textContent = game.name;
+
+    const description = document.createElement("p");
+    description.textContent = game.description;
+
+    const button = document.createElement("button");
+    button.className = "play-button";
+    button.textContent = "Play Now";
+    button.onclick = () => openGame(game.link);
+
+    card.append(icon, heading, description, button);
+    gameContainer.appendChild(card);
+});
+
+const title = document.getElementById("game-title");
+const instructions = document.getElementById("game-instructions");
+const controls = document.getElementById("game-controls");
+const result = document.getElementById("result");
+
+function openGame(game) {
+    controls.innerHTML = "";
+    result.textContent = "";
+
+    if (game === "#tictactoe") {
+        startTicTacToe();
+    } else if (game === "#guess") {
+        startGuess();
+    } else if (game === "#rps") {
+        startRPS();
+    }
+
+    document.getElementById("game-area")
+        .scrollIntoView({ behavior: "smooth" });
+}
+
+function startGuess() {
+    title.textContent = "🎯 Guess the Number";
+    instructions.textContent =
+        "Guess a number between 1 and 10.";
+
+    const secret = Math.floor(Math.random() * 10) + 1;
+
+    controls.innerHTML = `
+        <input type="number" id="guessInput"
+               min="1" max="10" placeholder="Your guess">
+        <button class="play-button" id="guessButton">Guess</button>
+        <button class="play-button" id="guessReset">Restart</button>
+    `;
+
+    let attempts = 0;
+
+    document.getElementById("guessButton").onclick = function() {
+        const input = document.getElementById("guessInput");
+        const guess = Number(input.value);
+
+        if (input.value === "" || guess < 1 ||
+            guess > 10 || !Number.isInteger(guess)) {
+            result.textContent = "Enter a whole number from 1 to 10.";
+            return;
+        }
+
+        attempts++;
+
+        if (guess === secret) {
+            result.textContent =
+                "🎉 Correct! You won in " + attempts + " attempts!";
+            document.getElementById("guessButton").disabled = true;
+        } else if (guess < secret) {
+            result.textContent = "Try a higher number!";
+        } else {
+            result.textContent = "Try a lower number!";
+        }
+    };
+
+    document.getElementById("guessReset").onclick = startGuess;
+}
+
+function startRPS() {
+    title.textContent = "✊ Rock Paper Scissors";
+    instructions.textContent = "Choose your move!";
+
+    controls.innerHTML = `
+        <button class="play-button" data-move="Rock">✊ Rock</button>
+        <button class="play-button" data-move="Paper">✋ Paper</button>
+        <button class="play-button" data-move="Scissors">✌️ Scissors</button>
+    `;
+
+    controls.querySelectorAll("[data-move]").forEach(button => {
+        button.onclick = function() {
+            const player = this.dataset.move;
+            const moves = ["Rock", "Paper", "Scissors"];
+            const computer = moves[Math.floor(Math.random() * 3)];
+
+            let message;
+
+            if (player === computer) {
+                message = "It's a draw!";
+            } else if (
+                (player === "Rock" && computer === "Scissors") ||
+                (player === "Paper" && computer === "Rock") ||
+                (player === "Scissors" && computer === "Paper")
+            ) {
+                message = "🎉 You win!";
+            } else {
+                message = "Computer wins!";
+            }
+
+            result.textContent =
+                "You: " + player + " | Computer: " +
+                computer + " — " + message;
+        };
+    });
+}
+
+function startTicTacToe() {
+    title.textContent = "⭕ Tic-Tac-Toe";
+    instructions.textContent = "You are X. The computer is O.";
+
+    let board = Array(9).fill("");
+    let finished = false;
+
+    controls.innerHTML = `
+        <div id="board" style="
+            display:grid;
+            grid-template-columns:repeat(3,70px);
+            gap:6px;
+            justify-content:center;">
+        </div>
+        <button class="play-button" id="tttReset">Restart</button>
+    `;
+
+    const boardElement = document.getElementById("board");
+
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement("button");
+
+        cell.style.cssText =
+            "height:70px;font-size:28px;background:#292b50;" +
+            "color:white;border:1px solid #555;border-radius:8px;";
+
+        cell.onclick = () => playerMove(i);
+
+        boardElement.appendChild(cell);
+    }
+
+    document.getElementById("tttReset").onclick = startTicTacToe;
+
+    function winner(mark) {
+        const lines = [
+            [0,1,2], [3,4,5], [6,7,8],
+            [0,3,6], [1,4,7], [2,5,8],
+            [0,4,8], [2,4,6]
+        ];
+
+        return lines.some(line =>
+            line.every(index => board[index] === mark)
+        );
+    }
+
+    function render() {
+        [...boardElement.children].forEach((cell, i) => {
+            cell.textContent = board[i];
+            cell.disabled = Boolean(board[i]) || finished;
+        });
+    }
+
+    function checkGame() {
+        if (winner("X")) {
+            finished = true;
+            result.textContent = "🎉 You win!";
+        } else if (winner("O")) {
+            finished = true;
+            result.textContent = "Computer wins!";
+        } else if (board.every(Boolean)) {
+            finished = true;
+            result.textContent = "It's a draw!";
+        }
+
+        render();
+    }
+
+    function playerMove(i) {
+        if (finished || board[i]) return;
+
+        board[i] = "X";
+        checkGame();
+
+        if (finished) return;
+
+        const available = board
+            .map((value, index) => value === "" ? index : -1)
+            .filter(index => index !== -1);
+
+        const move = available[
+            Math.floor(Math.random() * available.length)
+        ];
+
+        board[move] = "O";
+        checkGame();
+    }
+
+    render();
+}
+</script>
+
+</body>
+</html>
