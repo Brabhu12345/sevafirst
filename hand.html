@@ -1,0 +1,552 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>AI Robotic Hand Controller</title>  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>  <style>  
+* {  
+  box-sizing: border-box;  
+}  
+  
+body {  
+  margin: 0;  
+  padding: 18px;  
+  background: #10131b;  
+  color: white;  
+  font-family: Arial, sans-serif;  
+}  
+  
+.container {  
+  max-width: 650px;  
+  margin: auto;  
+}  
+  
+h2 {  
+  color: #55d6ff;  
+}  
+  
+.panel {  
+  background: #1c2230;  
+  padding: 15px;  
+  border-radius: 12px;  
+  margin: 12px 0;  
+}  
+  
+input, button {  
+  padding: 12px;  
+  border: 0;  
+  border-radius: 7px;  
+  margin: 4px 0;  
+}  
+  
+input {  
+  width: 100%;  
+}  
+  
+button {  
+  background: #168bd0;  
+  color: white;  
+  font-weight: bold;  
+  cursor: pointer;  
+}  
+  
+video {  
+  display: none;  
+}  
+  
+canvas {  
+  width: 100%;  
+  border-radius: 12px;  
+  background: black;  
+}  
+  
+.status {  
+  color: #55d6ff;  
+  font-weight: bold;  
+}  
+  
+.finger {  
+  display: flex;  
+  justify-content: space-between;  
+  padding: 8px;  
+  border-bottom: 1px solid #343b4c;  
+}  
+  
+.small {  
+  color: #aab3c5;  
+  font-size: 13px;  
+}  
+</style>  </head>  <body>  <div class="container">  <h2>🤖 AI Robotic Hand Controller</h2>  <div class="panel">  
+  <label>NodeMCU IP Address</label>  
+  <input id="ip" value="192.168.1.101">  <button onclick="saveIP()">Save IP</button>
+<button onclick="testConnection()">Test Connection</button>
+
+  <p id="connection" class="status">Not connected</p>  
+</div>  <div class="panel">  <button onclick="startCamera()">START CAMERA</button>
+<button onclick="stopCamera()">STOP CAMERA</button>
+
+  <p id="cameraStatus" class="status">Camera stopped</p>  <video id="video" playsinline></video>
+
+<canvas id="canvas" width="640" height="480"></canvas>
+
+</div>  <div class="panel">    <h3>Finger Detection</h3>    <div id="fingerList"></div>    <p>Pose ID: <span id="poseID">-</span></p>    <p>Detected pose: <span id="poseName">Waiting...</span></p>    <p id="sendStatus" class="status">Waiting for hand</p>    <p class="small">  
+    243 combinations | 3 states per finger  
+  </p>  </div>  </div>  <script>  
+  
+// ==================================  
+// CONFIGURATION  
+// ==================================  
+  
+const video = document.getElementById("video");  
+const canvas = document.getElementById("canvas");  
+const ctx = canvas.getContext("2d");  
+  
+const ipInput = document.getElementById("ip");  
+  
+ipInput.value =  
+  localStorage.getItem("robotIP") || "192.168.1.101";  
+  
+const fingerNames = [  
+  "Thumb", "Index", "Middle", "Ring", "Little"  
+];  
+  
+const fingerPoints = [  
+  [2, 3, 4],  
+  [5, 6, 8],  
+  [9, 10, 12],  
+  [13, 14, 16],  
+  [17, 18, 20]  
+];  
+  
+// ==================================  
+// FINGER STATE MEMORY  
+// ==================================  
+  
+let fingerStates = [0, 0, 0, 0, 0];  
+  
+let candidateID = -1;  
+let candidateFrames = 0;  
+let lastSentID = -1;  
+  
+let sending = false;  
+let camera = null;  
+let hands = null;  
+let running = false;  
+  
+// ==================================  
+// WIFI CONNECTION  
+// ==================================  
+  
+function saveIP() {  
+  localStorage.setItem("robotIP", ipInput.value.trim());  
+  
+  document.getElementById("connection").textContent =  
+    "IP saved: " + ipInput.value.trim();  
+}  
+  
+function nodeURL() {  
+  return "http://" + ipInput.value.trim();  
+}  
+  
+async function testConnection() {  
+  
+  const status = document.getElementById("connection");  
+  
+  status.textContent = "Connecting...";  
+  
+  try {  
+  
+    const response = await fetch(nodeURL() + "/ping");  
+  
+    const result = await response.text();  
+  
+    if (!response.ok) {  
+      throw new Error(result);  
+    }  
+  
+    status.textContent = result;  
+  
+    saveIP();  
+  
+  } catch (error) {  
+  
+    status.textContent =  
+      "Connection failed: " + error.message;  
+  
+  }  
+}  
+  
+// ==================================  
+// ANGLE CALCULATION  
+// ==================================  
+  
+function calculateAngle(a, b, c) {  
+  
+  const radians =  
+    Math.atan2(c.y - b.y, c.x - b.x) -  
+    Math.atan2(a.y - b.y, a.x - b.x);  
+  
+  let angle = Math.abs(radians * 180 / Math.PI);  
+  
+  if (angle > 180) {  
+    angle = 360 - angle;  
+  }  
+  
+  return angle;  
+}  
+  
+// ==================================  
+// IMPROVED FINGER CLASSIFICATION  
+// ==================================  
+  
+function classifyFinger(landmarks, points, index) {  
+  
+  const a = landmarks[points[0]];  
+  const b = landmarks[points[1]];  
+  const c = landmarks[points[2]];  
+  
+  const angle = calculateAngle(a, b, c);  
+  
+  const previous = fingerStates[index];  
+  
+  const OPEN_TO_HALF = 140;  
+  const HALF_TO_OPEN = 150;  
+  
+  const HALF_TO_CLOSE = 105;  
+  const CLOSE_TO_HALF = 120;  
+  
+  let next = previous;  
+  
+  if (previous === 0) {  
+  
+    if (angle < OPEN_TO_HALF) {  
+      next = 1;  
+    }  
+  
+  }  
+  
+  else if (previous === 1) {  
+  
+    if (angle >= HALF_TO_OPEN) {  
+      next = 0;  
+    }  
+  
+    else if (angle < HALF_TO_CLOSE) {  
+      next = 2;  
+    }  
+  
+  }  
+  
+  else {  
+  
+    if (angle >= CLOSE_TO_HALF) {  
+      next = 1;  
+    }  
+  
+  }  
+  
+  fingerStates[index] = next;  
+  
+  return next;  
+}  
+  
+// ==================================  
+// ENCODE 5 FINGERS INTO POSE ID  
+// ==================================  
+  
+function encodePose(states) {  
+  
+  let id = 0;  
+  
+  for (let i = 0; i < 5; i++) {  
+    id = id * 3 + states[i];  
+  }  
+  
+  return id;  
+}  
+  
+// ==================================  
+// POSE DESCRIPTION  
+// ==================================  
+  
+function poseDescription(states) {  
+  
+  return states.map((state, i) => {  
+  
+    return fingerNames[i] + ": " +  
+      ["Open", "Half", "Closed"][state];  
+  
+  }).join(" | ");  
+  
+}  
+  
+// ==================================  
+// UPDATE FINGER DISPLAY  
+// ==================================  
+  
+function updateFingerDisplay(states) {  
+  
+  const list = document.getElementById("fingerList");  
+  
+  list.innerHTML = states.map((state, i) => {  
+  
+    return `  
+      <div class="finger">  
+        <span>${fingerNames[i]}</span>  
+        <strong>  
+          ${["OPEN", "HALF", "CLOSED"][state]}  
+        </strong>  
+      </div>  
+    `;  
+  
+  }).join("");  
+  
+}  
+  
+// ==================================  
+// SEND POSE TO NODEMCU  
+// ==================================  
+  
+async function sendPose(id) {  
+  
+  if (sending) return;  
+  
+  sending = true;  
+  
+  try {  
+  
+    const response = await fetch(  
+      nodeURL() + "/pose?id=" + id  
+    );  
+  
+    const result = await response.text();  
+  
+    if (!response.ok) {  
+      throw new Error(result);  
+    }  
+  
+    lastSentID = id;  
+  
+    document.getElementById("sendStatus").textContent =  
+      "Sent successfully: Pose " + id;  
+  
+  }  
+  
+  catch (error) {  
+  
+    document.getElementById("sendStatus").textContent =  
+      "Send failed: " + error.message;  
+  
+    lastSentID = -1;  
+  
+  }  
+  
+  finally {  
+  
+    sending = false;  
+  
+  }  
+  
+}  
+  
+// ==================================  
+// MEDIAPIPE RESULTS  
+// ==================================  
+  
+function onResults(results) {  
+  
+  if (!running) return;  
+  
+  ctx.save();  
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);  
+  
+  ctx.translate(canvas.width, 0);  
+  ctx.scale(-1, 1);  
+  
+  ctx.drawImage(  
+    results.image,  
+    0, 0,  
+    canvas.width,  
+    canvas.height  
+  );  
+  
+  if (  
+    results.multiHandLandmarks &&  
+    results.multiHandLandmarks.length > 0  
+  ) {  
+  
+    const landmarks = results.multiHandLandmarks[0];  
+  
+    drawConnectors(  
+      ctx,  
+      landmarks,  
+      HAND_CONNECTIONS,  
+      { color: "#00e6a8", lineWidth: 3 }  
+    );  
+  
+    drawLandmarks(  
+      ctx,  
+      landmarks,  
+      { color: "#ffcc00", lineWidth: 1, radius: 3 }  
+    );  
+  
+    // Classify all five fingers independently  
+  
+    const states = fingerPoints.map((points, i) => {  
+  
+      return classifyFinger(landmarks, points, i);  
+  
+    });  
+  
+    const id = encodePose(states);  
+  
+    updateFingerDisplay(states);  
+  
+    document.getElementById("poseID").textContent = id;  
+  
+    document.getElementById("poseName").textContent =  
+      poseDescription(states);  
+  
+    // Stabilization: 7 matching frames  
+  
+    if (candidateID === id) {  
+  
+      candidateFrames++;  
+  
+    } else {  
+  
+      candidateID = id;  
+      candidateFrames = 1;  
+  
+    }  
+  
+    if (  
+      candidateFrames >= 7 &&  
+      id !== lastSentID &&  
+      !sending  
+    ) {  
+  
+      sendPose(id);  
+  
+    }  
+  
+  }  
+  
+  else {  
+  
+    candidateID = -1;  
+    candidateFrames = 0;  
+  
+    fingerStates = [0, 0, 0, 0, 0];  
+  
+    document.getElementById("poseName").textContent =  
+      "No hand detected";  
+  
+    document.getElementById("sendStatus").textContent =  
+      "Show your hand to the camera";  
+  
+  }  
+  
+  ctx.restore();  
+  
+}  
+  
+// ==================================  
+// START CAMERA  
+// ==================================  
+  
+async function startCamera() {  
+  
+  if (running) return;  
+  
+  try {  
+  
+    document.getElementById("cameraStatus").textContent =  
+      "Starting camera...";  
+  
+    hands = new Hands({  
+  
+      locateFile: file =>  
+        "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" + file  
+  
+    });  
+  
+    hands.setOptions({  
+  
+      maxNumHands: 1,  
+      modelComplexity: 0,  
+      minDetectionConfidence: 0.6,  
+      minTrackingConfidence: 0.6  
+  
+    });  
+  
+    hands.onResults(onResults);  
+  
+    camera = new Camera(video, {  
+  
+      onFrame: async () => {  
+  
+        if (running) {  
+          await hands.send({ image: video });  
+        }  
+  
+      },  
+  
+      width: 640,  
+      height: 480  
+  
+    });  
+  
+    running = true;  
+  
+    await camera.start();  
+  
+    document.getElementById("cameraStatus").textContent =  
+      "Camera running";  
+  
+  }  
+  
+  catch (error) {  
+  
+    running = false;  
+  
+    document.getElementById("cameraStatus").textContent =  
+      "Camera error: " + error.message;  
+  
+  }  
+  
+}  
+  
+// ==================================  
+// STOP CAMERA  
+// ==================================  
+  
+function stopCamera() {  
+  
+  running = false;  
+  
+  if (camera) {  
+  
+    camera.stop();  
+    camera = null;  
+  
+  }  
+  
+  if (hands) {  
+  
+    hands.close();  
+    hands = null;  
+  
+  }  
+  
+  candidateID = -1;  
+  candidateFrames = 0;  
+  fingerStates = [0, 0, 0, 0, 0];  
+  
+  document.getElementById("cameraStatus").textContent =  
+    "Camera stopped";  
+  
+}  
+  
+</script>  </body>  
+</html>
